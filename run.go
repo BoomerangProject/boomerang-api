@@ -30,5 +30,5 @@ package main
 import "fmt"
 
 func run() {
-	fmt.Prinln("hello again")
+	fmt.Println("hello again")
 }
