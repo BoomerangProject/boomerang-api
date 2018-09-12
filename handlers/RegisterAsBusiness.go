@@ -2,9 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
+
 	//"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/BoomerangProject/boomerang-api/services"
 )
 
 type Params struct {
@@ -20,9 +24,10 @@ func error(responseWriter http.ResponseWriter, errorMessage string) {
 
 func RegisterAsBusiness(responseWriter http.ResponseWriter, httpRequest *http.Request) {
 
-	decoder := json.NewDecoder(httpRequest.Body)
+	httpRequestBody, _ := ioutil.ReadAll(httpRequest.Body)
+
 	var params Params
-	decoder.Decode(&params)
+	json.Unmarshal(httpRequestBody, &params)
 
 	if len(params.BusinessAddress) < 1 {
 		error(responseWriter, "businessAddress is required")
@@ -39,9 +44,9 @@ func RegisterAsBusiness(responseWriter http.ResponseWriter, httpRequest *http.Re
 		return
 	}
 
-	AddFile2()
 
-	// add to ipfs
+	hash := services.AddJsonToIpfs(string(httpRequestBody))
+	fmt.Println(hash)
 
 	// do aws stuff with s3
 
